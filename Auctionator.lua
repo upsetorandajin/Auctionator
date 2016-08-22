@@ -1393,7 +1393,7 @@ end
 -----------------------------------------
 
 function Atr_StackSize ()
-  Auctionator.Debug.Message( 'Atr_StackSize' )
+  -- Auctionator.Debug.Message( 'Atr_StackSize' )
 
   return math.max( Atr_Batch_Stacksize:GetNumber(), 1 )
 end
@@ -1916,7 +1916,7 @@ end
 
 local aoa_count = 0
 
-function Atr_OnAuctionUpdate (...)
+function Atr_OnAuctionUpdate( ... )
   Auctionator.Debug.Message( 'Atr_OnAuctionUpdate' )
 
   local numBatchAuctions, totalAuctions = Atr_GetNumAuctionItems("list");
@@ -1939,7 +1939,8 @@ function Atr_OnAuctionUpdate (...)
     return;
   end;
 
-  if (Atr_Buy_OnAuctionUpdate()) then
+  if Atr_Buy_OnAuctionUpdate() then
+    Auctionator.Debug.Message( 'returning, Atr_Buy_OnAuctionUpdate returned true' )
     return
   end
 
@@ -3473,7 +3474,7 @@ end
 -----------------------------------------
 
 function Atr_ShowLineTooltip (self)
-  Auctionator.Debug.Message( 'Atr_ShowLineTooltip', self )
+  -- Auctionator.Debug.Message( 'Atr_ShowLineTooltip', self )
 
   local itemLink = self.itemLink;
 
@@ -3505,7 +3506,7 @@ end
 -----------------------------------------
 
 function Atr_HideLineTooltip (self)
-  Auctionator.Debug.Message( 'Atr_HideLineTooltip', self )
+  -- Auctionator.Debug.Message( 'Atr_HideLineTooltip', self )
 
   GameTooltip:Hide();
   BattlePetTooltip:Hide();
@@ -3989,39 +3990,45 @@ end
 
 -----------------------------------------
 
-function Atr_EntryOnClick(entry)
-  Auctionator.Debug.Message( 'Atr_EntryOnClick', entry )
+function Atr_EntryOnClick( entry )
+  Auctionator.Debug.Message( 'Atr_EntryOnClick' )
+  Auctionator.Util.Print( entry, 'Atr_EntryOnClick' )
 
   Atr_Clear_Owner_Item_Indices();
 
   local entryIndex = entry:GetID();
 
-  if     (Atr_ShowingSearchSummary())   then
-  elseif (Atr_IsSelectedTab_Current())  then    gCurrentPane.currIndex = entryIndex;
-  else                        gCurrentPane.histIndex = entryIndex;
+  if Atr_ShowingSearchSummary() then
+    -- noop I guess
+  elseif Atr_IsSelectedTab_Current() then
+    gCurrentPane.currIndex = entryIndex
+  else
+    gCurrentPane.histIndex = entryIndex
   end
 
-  if (Atr_ShowingSearchSummary()) then
+  if Atr_ShowingSearchSummary() then
+    Auctionator.Debug.Message( 'Atr_EntryOnClick, Atr_ShowingSearchSummary returns true' )
     local scn = gCurrentPane.activeSearch.sortedScans[entryIndex];
 
     gCurrentPane.savedScrollOffset = FauxScrollFrame_GetOffset (AuctionatorScrollFrame)
     gCurrentPane.savedVertScroll   = AuctionatorScrollFrame:GetVerticalScroll()
 
-    FauxScrollFrame_SetOffset (AuctionatorScrollFrame, 0);
-    gCurrentPane.activeScan = scn;
-    gCurrentPane.currIndex = scn:FindMatchByYours ();
-    if (gCurrentPane.currIndex == nil) then
-      gCurrentPane.currIndex = scn:FindCheapest();
+    FauxScrollFrame_SetOffset (AuctionatorScrollFrame, 0)
+
+    gCurrentPane.activeScan = scn
+    gCurrentPane.currIndex = scn:FindMatchByYours()
+    if gCurrentPane.currIndex == nil then
+      gCurrentPane.currIndex = scn:FindCheapest()
     end
 
     gCurrentPane.SS_hilite_itemName = scn.itemName;
     gCurrentPane.UINeedsUpdate = true;
   else
-    Atr_HighlightEntry (entryIndex);
-    Atr_UpdateRecommendation(true);
+    Atr_HighlightEntry( entryIndex )
+    Atr_UpdateRecommendation( true )
   end
 
-  PlaySound ("igMainMenuOptionCheckBoxOn");
+  PlaySound( "igMainMenuOptionCheckBoxOn" )
 end
 
 -----------------------------------------
@@ -4072,21 +4079,15 @@ end
 -----------------------------------------
 
 function Atr_DoesAuctionMatch (list, i, name, buyout, stacksize)
-  Auctionator.Debug.Message( 'Atr_DoesAuctionMatch', list, i, name, buyout, stacksize )
+  local aname, _, astacksize, _, _, _, _, _, _, abuyout, _, _, _ = GetAuctionItemInfo( list, i )
+  local isSame = aname and aname == name and abuyout == buyout and astacksize == stacksize
 
-  local aname, _, astacksize, _, _, _, _, _, _, abuyout, _, _, _ = GetAuctionItemInfo (list, i);
+  Auctionator.Debug.Message(
+    'Atr_DoesAuctionMatch ' ..
+    aname .. ' ' .. abuyout .. ' ' .. astacksize .. ' ' .. ( isSame and 'true' or 'false' )
+  )
 
-  Auctionator.Debug.Message( 'Atr_DoesAuctionMatch', aname, astacksize, abuyout )
-
-  if (aname and aname == name and abuyout == buyout and astacksize == stacksize) then
-    Auctionator.Debug.Message( 'Atr_DoesAuctionMatch', true )
-    return true;
-  end
-
-  Auctionator.Debug.Message( 'Atr_DoesAuctionMatch', false )
-
-  return false;
-
+  return isSame
 end
 
 -----------------------------------------
