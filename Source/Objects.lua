@@ -19,7 +19,7 @@ end
 
 function Auctionator.Debug.Message(message, ...)
   if Auctionator.Debug.IsOn() then
-    print( message, ... )
+    print( '[' .. time() - 1471800000 .. '] ' .. message, ... )
   end
 end
 
