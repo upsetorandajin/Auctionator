@@ -27,7 +27,7 @@ function Auctionator.Search:Start()
   Auctionator.Debug.Message( 'Auctionator.Search:Start' )
 
   if CanSendAuctionQuery() then
-    QueryAuctionItems( self.query:ToParams( self.currentPage ) )
+    Atr_QueryAuctionItems( self.query:ToParams( self.currentPage ) )
   else
     Auctionator.Debug.Message( 'CanSendAuctionQuery FALSE' )
   end

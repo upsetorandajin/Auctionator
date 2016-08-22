@@ -44,108 +44,108 @@ function Atr_Buy_Debug1 (...)
   if (gBuyState ~= ATR_BUY_NULL) then
     zc.md (asstr, "curpage: ", gAtr_Buy_CurPage, "   numBought: ", gAtr_Buy_NumBought, "  ", ...);
   end
-
 end
 
 -----------------------------------------
 
 function Atr_ClearBuyState()
-
-  gBuyState = ATR_BUY_NULL;
-
+  gBuyState = ATR_BUY_NULL
 end
-
 
 -----------------------------------------
 
-local function Atr_Set_BuyConfirm_Progress ()
+local function Atr_Set_BuyConfirm_Progress()
+  local numAvail = gAtr_Buy_MaxCanBuy - gAtr_Buy_NumBought
 
-  local numAvail = gAtr_Buy_MaxCanBuy - gAtr_Buy_NumBought;
+  local s
 
-  local s;
-
-  if (gAtr_Buy_StackSize == 1) then
-    s = string.format (ZT("%d available"), numAvail);
-  elseif (numAvail == 1) then
-    s = string.format (ZT("1 stack available"), numAvail);
+  if gAtr_Buy_StackSize == 1 then
+    s = string.format( ZT( "%d available" ), numAvail )
+  elseif numAvail == 1 then
+    s = string.format( ZT( "1 stack available" ), numAvail )
   else
-    s = string.format (ZT("%d stacks available"), numAvail);
+    s = string.format( ZT( "%d stacks available"), numAvail )
   end
 
-  Atr_Buy_NumAvail_Text:SetText (s);
-  Atr_Buy_Continue_Text:SetText (string.format (ZT("%d bought so far"), gAtr_Buy_NumBought));
-
+  Atr_Buy_NumAvail_Text:SetText( s )
+  Atr_Buy_Continue_Text:SetText( string.format( ZT( "%d bought so far" ), gAtr_Buy_NumBought ))
 end
 
 -----------------------------------------
 
-function Atr_Buy1_Onclick ()
+function Atr_Buy1_Onclick()
+  Auctionator.Debug.Message( 'Atr_Buy1_Onclick' )
 
-
-  if (not Atr_IsSelectedTab_Current()) then
-    return;
+  if not Atr_IsSelectedTab_Current() then
+    Auctionator.Debug.Message( 'exiting, Atr_IsSelectedTab_Current returned true' )
+    return
   end
 
-  gAtr_Buy_Query      = Atr_NewQuery();
-  gAtr_Buy_NumUserWants = -1;
-  gAtr_Buy_NumBought    = 0;
+  gAtr_Buy_Query = Atr_NewQuery()
+  gAtr_Buy_NumUserWants = -1
+  gAtr_Buy_NumBought = 0
 
-  local currentPane = Atr_GetCurrentPane();
+  local currentPane = Atr_GetCurrentPane()
+  local scan = currentPane.activeScan
+  local data = scan.sortedData[ currentPane.currIndex ]
 
-  local scan = currentPane.activeScan;
+  Auctionator.Util.Print( scan, 'SCAN DATA' )
 
-  local data = scan.sortedData[currentPane.currIndex];
+  gAtr_Buy_BuyoutPrice = data.buyoutPrice
+  gAtr_Buy_ItemName = scan.itemName
+  gAtr_Buy_ItemLink = scan.itemLink
+  gAtr_Buy_StackSize = data.stackSize
+  gAtr_Buy_MaxCanBuy = data.count
+  gAtr_Buy_Pass = 1    -- - first pass
+  gAtr_NextMatchIndex = 0
 
-  gAtr_Buy_BuyoutPrice  = data.buyoutPrice;
-  gAtr_Buy_ItemName   = scan.itemName;
-  gAtr_Buy_ItemLink   = scan.itemLink;
-  gAtr_Buy_StackSize    = data.stackSize;
-  gAtr_Buy_MaxCanBuy    = data.count;
-  gAtr_Buy_Pass     = 1;    -- - first pass
-  gAtr_NextMatchIndex   = 0;
+  Atr_Buy_Confirm_ItemName:SetText( gAtr_Buy_ItemName .. " |cCCCCCCCCx" .. gAtr_Buy_StackSize )
+  Atr_Buy_Confirm_Numstacks:SetNumber( 1 )
+  Atr_Buy_Confirm_Max_Text:SetText( ZT( "max" ) .. ": " .. gAtr_Buy_MaxCanBuy )
 
-  Atr_Buy_Confirm_ItemName:SetText (gAtr_Buy_ItemName.." |cCCCCCCCCx"..gAtr_Buy_StackSize);
-  Atr_Buy_Confirm_Numstacks:SetNumber (1);
-  Atr_Buy_Confirm_Max_Text:SetText (ZT("max")..": "..gAtr_Buy_MaxCanBuy);
+  Atr_Buy_Part1:Hide()
 
-  Atr_Buy_Part1:Hide();
---  Atr_Buy_Part2:Hide();
+  Atr_Buy_Continue_Text:Hide()
 
-  Atr_Buy_Continue_Text:Hide();
+  Atr_Buy_NumAvail_Text:SetText( string.format( ZT( "%d available" ), gAtr_Buy_MaxCanBuy ))
+  Atr_Buy_Continue_Text:SetText( string.format( ZT( "%d bought so far" ), 0 ))
 
-  Atr_Buy_NumAvail_Text:SetText (string.format (ZT("%d available"), gAtr_Buy_MaxCanBuy));
-  Atr_Buy_Continue_Text:SetText (string.format (ZT("%d bought so far"), 0));
+  Atr_Set_BuyConfirm_Progress()
 
-  Atr_Set_BuyConfirm_Progress();
-
-  Atr_Buy_Confirm_OKBut:SetText (ZT("Buy One"))
+  Atr_Buy_Confirm_OKBut:SetText( ZT( "Buy One" ))
   Atr_Buy_Confirm_OKBut:Disable();
-  Atr_Buy_Confirm_CancelBut:SetText (ZT("Cancel"))
-  Atr_Buy_Confirm_Frame:Show();
+  Atr_Buy_Confirm_CancelBut:SetText( ZT( "Cancel" ))
+  Atr_Buy_Confirm_Frame:Show()
 
-  SortAuctionClearSort("list")
-  SortAuctionSetSort("list", "buyout")
-  SortAuctionApplySort("list")
+  Auctionator.Debug.Message( '* before SortAuctionClearSort' )
+  SortAuctionClearSort( "list" )
+  Auctionator.Debug.Message( '* before SortAuctionSetSort' )
+  SortAuctionSetSort( "list", "buyout" )
+  Auctionator.Debug.Message( '* before SortAuctionApplySort' )
+  SortAuctionApplySort( "list" )
 
-  Atr_Buy_QueueQuery(0);
-
+  -- TODO: This is where we need to build the buy list now, using scan data
+  -- * Will need to build reverse index by stack size and price in current scan to get page and index
+  -- * Will now need to check GetAuctionItemInfo before call to PlaceAuctionBid
+  -- Atr_Buy_QueueQuery( 0 )
 end
 
 -----------------------------------------
 
-function Atr_Buy_QueueQuery (page)
+function Atr_Buy_QueueQuery( page )
+  Auctionator.Debug.Message( 'Atr_Buy_QueueQuery', page )
 
-  gAtr_Buy_CurPage = page;
+  gAtr_Buy_CurPage = page
 
-  gBuyState = ATR_BUY_WAITING_FOR_AH_CAN_SEND;
-  gAtr_Buy_Waiting_Start = time();
+  gBuyState = ATR_BUY_WAITING_FOR_AH_CAN_SEND
+  gAtr_Buy_Waiting_Start = time()
 
 end
 
 -----------------------------------------
 
 function Atr_Buy_SendQuery()
-  Auctionator.Debug.Message( 'Atr_Buy_SendQuery' )
+  Auctionator.Debug.Message( 'Atr_Buy_SendQuery', [[page ]] .. gAtr_Buy_CurPage )
   gAtr_NextMatchIndex = 0
 
   if CanSendAuctionQuery() then
@@ -155,13 +155,15 @@ function Atr_Buy_SendQuery()
 
     -- attempting to reduce number of disconnects
     local queryString = Auctionator.Util.UTF8_Truncate( gAtr_Buy_ItemName )
-    QueryAuctionItems( queryString, nil, nil, gAtr_Buy_CurPage, nil, nil, false, false, nil )
+    Atr_QueryAuctionItems( queryString, nil, nil, gAtr_Buy_CurPage, nil, nil, false, false, nil )
+  else
+    Auctionator.Debug.Message( '* returning, CanSendAuctionQuery is false' )
   end
 end
 
 -----------------------------------------
 
-function Atr_Buy_Idle ()
+function Atr_Buy_Idle()
 
   local elapsed = -1;
   if (gAtr_Buy_Waiting_Start) then
@@ -180,7 +182,7 @@ function Atr_Buy_Idle ()
     elseif (time() - gAtr_Buy_Waiting_Start > 10) then
       Atr_Buy_Cancel (ZT("Auction House timed out"));
     else
-      Atr_Buy_SendQuery ();
+      Atr_Buy_SendQuery()
     end
 
   elseif (gBuyState == ATR_BUY_PAGE_WITH_ITEM_LOADED) then
@@ -210,26 +212,25 @@ end
 -----------------------------------------
 
 function Atr_Buy_OnAuctionUpdate()
+  Auctionator.Debug.Message( 'Atr_Buy_OnAuctionUpdate' )
 
   if (gBuyState == ATR_BUY_QUERY_SENT) then
+    Auctionator.Debug.Message( '* current page: ', gAtr_Buy_CurPage )
 
-zz ("curpage", gAtr_Buy_CurPage);
+    gAtr_Buy_Query:CapturePageInfo( gAtr_Buy_CurPage )
 
-    gAtr_Buy_Query:CapturePageInfo(gAtr_Buy_CurPage)
-
-    if (gAtr_Buy_Query:CheckForDuplicatePage(gAtr_Buy_CurPage)) then
-
-      Atr_Buy_QueueQuery (gAtr_Buy_CurPage);
-
+    if gAtr_Buy_Query:CheckForDuplicatePage( gAtr_Buy_CurPage ) then
+      Auctionator.Debug.Message( '* queueing query: ', gAtr_Buy_CurPage )
+      Atr_Buy_QueueQuery( gAtr_Buy_CurPage )
     else
-      gBuyState = ATR_BUY_CHECKING_PAGE_FOR_MATCHES;
+      gBuyState = ATR_BUY_CHECKING_PAGE_FOR_MATCHES
 
-      Atr_Buy_BuildMatchList();
+      Atr_Buy_BuildMatchList()
 
-      if (#gAtr_Buy_MatchList > 0) then
-        gBuyState = ATR_BUY_PAGE_WITH_ITEM_LOADED;
+      if #gAtr_Buy_MatchList > 0 then
+        gBuyState = ATR_BUY_PAGE_WITH_ITEM_LOADED
       else
-        Atr_Buy_NextPage_Or_Cancel();
+        Atr_Buy_NextPage_Or_Cancel()
       end
     end
 
@@ -256,28 +257,30 @@ end
 
 -----------------------------------------
 
-function Atr_Buy_BuildMatchList ()
+function Atr_Buy_BuildMatchList()
+  Auctionator.Debug.Message( 'Atr_Buy_BuildMatchList' )
 
-  local i     = 1;
-  local x     = 1;
-  local numInList = Atr_GetNumAuctionItems ("list");
+  local i = 1
+  local x = 1
+  local numInList = Atr_GetNumAuctionItems( "list" )
 
-  Atr_Buy_ClearMatchList();
+  Atr_Buy_ClearMatchList()
 
-  for i = 1,numInList do
+  Auctionator.Debug.Message( '* Atr_DoesAuctionMatch( list, ' .. i .. ', ' ..
+    gAtr_Buy_ItemName .. ', ' .. gAtr_Buy_BuyoutPrice .. ', ' .. gAtr_Buy_StackSize .. ' )' )
 
-    if (Atr_DoesAuctionMatch ("list", i, gAtr_Buy_ItemName, gAtr_Buy_BuyoutPrice, gAtr_Buy_StackSize)) then
-      --zz ("x, i: ", x, i);
-      gAtr_Buy_MatchList[x] = i;
-      x = x + 1;
+  for i = 1, numInList do
+    if Atr_DoesAuctionMatch( "list", i, gAtr_Buy_ItemName, gAtr_Buy_BuyoutPrice, gAtr_Buy_StackSize ) then
+      gAtr_Buy_MatchList[ x ] = i
+      x = x + 1
     end
   end
-
 end
 
 -----------------------------------------
 
 function Atr_Buy_BuyNextOnPage ()
+  Auctionator.Debug.Message( 'Atr_Buy_BuyNextOnPage' )
 
   local numMatches    = 0;
   local numBoughtThisPage = 0;
@@ -391,7 +394,8 @@ end
 
 -----------------------------------------
 
-function Atr_Buy_Confirm_OK ()
+function Atr_Buy_Confirm_OK()
+  Auctionator.Debug.Message( 'Atr_Buy_Confirm_OK' )
 
   local numJustBought = Atr_Buy_BuyNextOnPage()
 
