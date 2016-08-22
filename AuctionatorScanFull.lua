@@ -95,7 +95,7 @@ function Atr_FullScanStart()
         ITEM_QUALITY_COLORS[-1] = {r=0, b=0, g=0}
       end
 
-      QueryAuctionItems( "", nil, nil, 0, nil, nil, true, false, nil )
+      Atr_QueryAuctionItems( "", nil, nil, 0, nil, nil, true, false, nil )
     end
 
   end
@@ -145,7 +145,7 @@ function Atr_FullScanFrameIdle()
     zz ("gDeniedCounter", gDeniedCounter);
     gDeniedCounter = 0;
 
-    QueryAuctionItems( "", nil, nil, gSlowScanPage, nil, nil, false, false, nil )
+    Atr_QueryAuctionItems( "", nil, nil, gSlowScanPage, nil, nil, false, false, nil )
 
     gAtr_FullScanState = ATR_FS_SLOW_QUERY_SENT
     if (gSlowScanTotalPages) then
