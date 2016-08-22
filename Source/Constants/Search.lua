@@ -16,3 +16,4 @@ Auctionator.Constants.Sort = {
 
 Auctionator.Constants.FilterDefault = '-------'
 Auctionator.Constants.AdvancedSearchDivider = ';'
+Auctionator.Constants.BigNum = 999999999999

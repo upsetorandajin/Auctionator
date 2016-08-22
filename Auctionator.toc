@@ -10,17 +10,15 @@
 
 Libs\LibItemUpgradeInfo-1.0\LibItemUpgradeInfo-1.0.xml
 
+zcUtils.lua
+Locales\Manifest.xml
+AuctionatorLocalize.lua
+
 Source\Manifest.xml
 
 AuctionatorFilters.lua
-AuctionatorUtil.lua
-
-zcUtils.lua
 
 AuctionatorItemLink.lua
-
-Locales\Manifest.xml
-AuctionatorLocalize.lua
 
 Auctionator.lua
 AuctionatorShop.lua
