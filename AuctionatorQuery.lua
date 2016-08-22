@@ -97,7 +97,11 @@ function AtrQuery:CheckForDuplicatePage (pagenum)
       end
 
       if (allItemsIdentical and dupPageFound) then    -- handle those numnuts who post 200 identical auctions
-        zz ("ALL ITEMS IDENTICAL: ", self.prvPageInfo.pagenum, self.curPageInfo.pagenum);
+        Auctionator.Debug.Message(
+          [[AtrQuery:CheckForDuplicatePage, all items identical:]],
+          self.prvPageInfo.pagenum, self.curPageInfo.pagenum
+        )
+        -- zz ("ALL ITEMS IDENTICAL: ", self.prvPageInfo.pagenum, self.curPageInfo.pagenum);
         dupPageFound = false
       end
     end
@@ -105,7 +109,10 @@ function AtrQuery:CheckForDuplicatePage (pagenum)
 
   if (dupPageFound) then
     self.numDupPages = self.numDupPages + 1
-    zz ("DUPLICATE PAGE FOUND: ", self.prvPageInfo.pagenum, self.curPageInfo.pagenum);
+    Auctionator.Debug.Message(
+      [[AtrQuery:CheckForDuplicatePage, duplicate page found:]],
+      self.prvPageInfo.pagenum, self.curPageInfo.pagenum
+    )
   end
 
   self.prvPageInfo = {}
