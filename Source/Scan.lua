@@ -24,7 +24,7 @@ Auctionator.Scan = {
   bidIndex = {}
 }
 
-function Auctionator.Scan:new( Istring, itemName )
+function Auctionator.Scan:new( options )
   options = options or {}
   setmetatable( options, self )
   self.__index = self
@@ -32,7 +32,7 @@ function Auctionator.Scan:new( Istring, itemName )
   return options
 end
 
-function Auctionator.Scan:UpdateItemLink (itemLink)
+function Auctionator.Scan:UpdateItemLink( itemLink )
   -- Auctionator.Debug.Message( itemLink )
 
   if itemLink and self.itemLink == nil then
@@ -53,20 +53,6 @@ function Auctionator.Scan:UpdateItemLink (itemLink)
 
     else
       Auctionator.Util.Print( { GetItemInfo( itemLink ) }, 'GET ITEM INFO' .. itemLink )
-      -- TODO: Capture this knowledge somewhere
-      -- 1: name
-      -- 2: itemLink
-      -- 3: quality
-      -- 4: iLevel
-      -- 5: required Level
-      -- 6: itemClass String
-      -- 7: subClass String
-      -- 8: ? (int)
-      -- 9: WTF String
-      -- 10: big int
-      -- 11: big int
-      -- 12: itemClass int
-      -- 13: subClass int
 
       _, _, quality, iLevel, _, sType, sSubType, _, _, _, _, itemClass, itemSubClass = GetItemInfo(itemLink)
 
@@ -89,7 +75,29 @@ function Auctionator.Scan:UpdateItemLink (itemLink)
 
 end
 
-function Auctionator.Scan:AddScanItem( stackSize, buyoutPrice, owner, numAuctions, curpage )
+-- TODO I *think* I only want to do this when curpage and indexonpage are passed
+-- Not terribly certain that I'll always get these, and not certain that they
+-- correspond to what I think they do. Yay code spikes
+function Auctionator.Scan:AddToBidIndex( buyoutPrice, stackSize, page, index )
+  if page == nil or index == nil then
+    return
+  end
+
+  local key = buyoutPrice .. '-' .. stackSize
+
+  if self.bidIndex[ key ] == nil then
+    self.bidIndex[ key ] = { count = 0, entries = {} }
+  end
+
+  self.bidIndex[ key ].count = self.bidIndex[ key ].count + 1
+  table.insert( self.bidIndex[ key ].entries, {
+    page = page,
+    index = index
+  })
+end
+
+function Auctionator.Scan:AddScanItem( stackSize, buyoutPrice, owner, numAuctions, curpage, indexOnPage )
+  Auctionator.Debug.Message( 'Auctionator.Scan:AddScanItem', stackSize, buyoutPrice, owner, numAuctions, curpage, indexOnPage )
 
   local sd = {}
   local i
@@ -97,6 +105,8 @@ function Auctionator.Scan:AddScanItem( stackSize, buyoutPrice, owner, numAuction
   if numAuctions == nil then
     numAuctions = 1
   end
+
+  self:AddToBidIndex( buyoutPrice, stackSize, curpage, indexOnPage )
 
   for i = 1, numAuctions do
     sd["stackSize"] = stackSize

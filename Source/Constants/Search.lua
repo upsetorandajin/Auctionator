@@ -1,7 +1,7 @@
 Auctionator.Constants.SearchStates = {
   NULL = 0,
   PRE_QUERY = 1,
-  IN_QUERY = 2, -- Replaced KM_INQUERY, not used?
+  IN_QUERY = 2,
   POST_QUERY = 3,
   ANALYZING = 4,
   SETTING_SORT = 5

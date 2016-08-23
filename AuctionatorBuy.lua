@@ -89,7 +89,7 @@ function Atr_Buy1_Onclick()
   local scan = currentPane.activeScan
   local data = scan.sortedData[ currentPane.currIndex ]
 
-  Auctionator.Util.Print( scan, 'SCAN DATA' )
+  Auctionator.Util.Print( scan.bidIndex, 'SCAN DATA' )
 
   gAtr_Buy_BuyoutPrice = data.buyoutPrice
   gAtr_Buy_ItemName = scan.itemName
@@ -113,9 +113,22 @@ function Atr_Buy1_Onclick()
   Atr_Set_BuyConfirm_Progress()
 
   Atr_Buy_Confirm_OKBut:SetText( ZT( "Buy One" ))
-  Atr_Buy_Confirm_OKBut:Disable();
+  -- Atr_Buy_Confirm_OKBut:Disable();
   Atr_Buy_Confirm_CancelBut:SetText( ZT( "Cancel" ))
   Atr_Buy_Confirm_Frame:Show()
+
+  if scan.bidIndex ~= nil then
+    gAtr_Buy_MatchList = scan.bidIndex[ gAtr_Buy_BuyoutPrice .. '-' .. gAtr_Buy_StackSize ]
+
+    -- Atr_Buy_Confirm_OKBut:Enable()
+    if gAtr_Buy_NumBought > 0 then
+      Atr_Buy_Confirm_OKBut:SetText( ZT( "Buy Another" ))
+      Atr_Buy_Confirm_CancelBut:SetText( ZT( "Done" ))
+    else
+      Atr_Buy_Confirm_OKBut:SetText( ZT( "Buy One" ))
+      Atr_Buy_Confirm_CancelBut:SetText( ZT( "Cancel" ))
+    end
+  end
 
   Auctionator.Debug.Message( '* before SortAuctionClearSort' )
   SortAuctionClearSort( "list" )
@@ -185,25 +198,24 @@ function Atr_Buy_Idle()
       Atr_Buy_SendQuery()
     end
 
-  elseif (gBuyState == ATR_BUY_PAGE_WITH_ITEM_LOADED) then
+  -- elseif gBuyState == ATR_BUY_PAGE_WITH_ITEM_LOADED then
+  --   if (Atr_Buy_PageHasMatch()) then    -- check if any left that haven't been bought
 
-    if (Atr_Buy_PageHasMatch()) then    -- check if any left that haven't been bought
+  --     Atr_Buy_Confirm_OKBut:Enable();
 
-      Atr_Buy_Confirm_OKBut:Enable();
+  --     if (gAtr_Buy_NumBought > 0) then
+  --       Atr_Buy_Confirm_OKBut:SetText (ZT("Buy Another"))
+  --       Atr_Buy_Confirm_CancelBut:SetText (ZT("Done"))
+  --     else
+  --       Atr_Buy_Confirm_OKBut:SetText (ZT("Buy One"))
+  --       Atr_Buy_Confirm_CancelBut:SetText (ZT("Cancel"))
+  --     end
 
-      if (gAtr_Buy_NumBought > 0) then
-        Atr_Buy_Confirm_OKBut:SetText (ZT("Buy Another"))
-        Atr_Buy_Confirm_CancelBut:SetText (ZT("Done"))
-      else
-        Atr_Buy_Confirm_OKBut:SetText (ZT("Buy One"))
-        Atr_Buy_Confirm_CancelBut:SetText (ZT("Cancel"))
-      end
+  --   else
+  --     local queueIf = (time() - gAtr_Buy_Waiting_Start > 2);    -- wait a few seconds for Auction List to Update after buys
 
-    else
-      local queueIf = (time() - gAtr_Buy_Waiting_Start > 2);    -- wait a few seconds for Auction List to Update after buys
-
-      Atr_Buy_NextPage_Or_Cancel (queueIf);
-    end
+  --     Atr_Buy_NextPage_Or_Cancel (queueIf);
+  --   end
 
   end
 
@@ -282,35 +294,43 @@ end
 function Atr_Buy_BuyNextOnPage ()
   Auctionator.Debug.Message( 'Atr_Buy_BuyNextOnPage' )
 
-  local numMatches    = 0;
-  local numBoughtThisPage = 0;
-  local i;
-  local x;
+  local bidEntry = table.remove( gAtr_Buy_MatchList.entries )
+  gAtr_Buy_MatchList.count = gAtr_Buy_MatchList.count - 1
 
-  local numInMatchList = #gAtr_Buy_MatchList;
+  Auctionator.Util.Print( bidEntry, 'bidEntry removed' )
 
-  for x = numInMatchList,1,-1 do
+  -- PlaceAuctionBid( 'list', )
 
-    i = gAtr_Buy_MatchList[x];
+  return 1
 
-    table.remove (gAtr_Buy_MatchList);
+  -- local numBoughtThisPage = 0
+  -- local item;
+  -- local x;
 
-    if (Atr_DoesAuctionMatch ("list", i, gAtr_Buy_ItemName, gAtr_Buy_BuyoutPrice, gAtr_Buy_StackSize)) then
+  -- local numInMatchList = #gAtr_Buy_MatchList;
 
-      PlaceAuctionBid("list", i, gAtr_Buy_BuyoutPrice);
+  -- for x = numInMatchList, 1, -1 do
 
-      numBoughtThisPage  = numBoughtThisPage + 1;
-      gAtr_Buy_NumBought = gAtr_Buy_NumBought + 1;
+  --   item = gAtr_Buy_MatchList[x];
 
-      Atr_Set_BuyConfirm_Progress();
-      Atr_Buy_Continue_Text:Show();
+  --   table.remove (gAtr_Buy_MatchList);
 
-      break;
-    end
+  --   if (Atr_DoesAuctionMatch ("list", item, gAtr_Buy_ItemName, gAtr_Buy_BuyoutPrice, gAtr_Buy_StackSize)) then
 
-  end
+  --     PlaceAuctionBid("list", item, gAtr_Buy_BuyoutPrice);
 
-  return numBoughtThisPage;
+  --     numBoughtThisPage  = numBoughtThisPage + 1;
+  --     gAtr_Buy_NumBought = gAtr_Buy_NumBought + 1;
+
+  --     Atr_Set_BuyConfirm_Progress();
+  --     Atr_Buy_Continue_Text:Show();
+
+  --     break;
+  --   end
+
+  -- end
+
+  -- return numBoughtThisPage;
 end
 
 

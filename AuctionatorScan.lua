@@ -468,7 +468,9 @@ function AtrSearch:AnalyzeResultsPage()
           if scn then
             local curpage = tonumber( self.current_page ) - 1
 
-            scn:AddScanItem( item.count, item.buyoutPrice, item.owner, 1, curpage )
+            Auctionator.Util.Print( item, 'AnalyzeResultsPage' )
+
+            scn:AddScanItem( item.count, item.buyoutPrice, item.owner, 1, curpage, x )
             scn:UpdateItemLink( item.itemLink )
           end
         end
@@ -933,7 +935,8 @@ end
 
 -----------------------------------------
 
-function Atr_UpdateScanDBprice (itemName, currentLowPrice, db)
+function Atr_UpdateScanDBprice( itemName, currentLowPrice, db )
+  Auctionator.Debug.Message( 'Atr_UpdateScanDBprice', itemName, currentLowPrice, db )
 
   if (currentLowPrice == nil) then
     zc.msg_badErr ("currentLowPrice in NIL!!!!!!", itemName)
