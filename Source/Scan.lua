@@ -94,7 +94,8 @@ function Auctionator.Scan:AddToBidIndex( buyoutPrice, stackSize, page, index, ow
     page = page,
     index = index,
     owner = owner,
-    stackSize = stackSize
+    stackSize = stackSize,
+    buyoutPrice = buyoutPrice
   })
 end
 
