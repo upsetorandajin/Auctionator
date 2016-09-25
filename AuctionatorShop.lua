@@ -951,6 +951,12 @@ function Atr_Adv_Search_Do()
     maxItemLevel = Atr_AS_MaxItemlevel:GetNumber()
   end
 
+  local usable = 0
+  if Atr_AS_Usable_Checkbox:GetChecked() then
+    usable = 1
+  end
+
+
   local tokens = {}
   table.insert( tokens, text )
   table.insert( tokens, filterKey )
@@ -958,6 +964,7 @@ function Atr_Adv_Search_Do()
   table.insert( tokens, maxLevel )
   table.insert( tokens, minItemLevel )
   table.insert( tokens, maxItemLevel )
+  table.insert( tokens, usable )
 
   local tempSearchText = table.concat( tokens, Auctionator.Constants.AdvancedSearchDivider )
 

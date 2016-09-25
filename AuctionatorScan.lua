@@ -668,6 +668,12 @@ function Atr_ParseCompoundSearch( searchString )
     maxItemLevel = nil
   end
 
+  if usable == 0 then
+    usable = nil
+  else
+    usable = true
+  end
+
   return queryString, filter, minLevel, maxLevel, minItemLevel, maxItemLevel, usable
 end
 
@@ -681,63 +687,65 @@ function AtrSearch:Continue()
 
   if canQuery then
 
-    self.processing_state = KM_IN_QUERY;
+    self.processing_state = KM_IN_QUERY
 
-    local queryString;
+    local queryString
 
     local filterData = nil
-    local minLevel    = nil;
-    local maxLevel    = nil;
+    local minLevel = nil
+    local maxLevel = nil
+    local usable = nil
 
-    if (Atr_IsCompoundSearch(self.searchText)) then
-      queryString, filterData, minLevel, maxLevel = Atr_ParseCompoundSearch (self.searchText);
+    if Atr_IsCompoundSearch( self.searchText ) then
+      queryString, filterData, minLevel, maxLevel, _, _, usable = Atr_ParseCompoundSearch( self.searchText )
 
-    elseif (self.shplist) then
-      queryString = Atr_GetShoppingListItem (self)
+    elseif self.shplist then
+      queryString = Atr_GetShoppingListItem( self )
 
-      self.exactMatchText = Atr_GetExactMatchText(queryString)
-      if (self.exactMatchText) then
+      self.exactMatchText = Atr_GetExactMatchText( queryString )
+      if self.exactMatchText then
         queryString = self.exactMatchText
       end
 
       -- skip nested shopping lists or compound searches
-      while (Atr_IsShoppingListSearch(queryString) or Atr_IsCompoundSearch(queryString)) do
-        zc.md ("Skipping ", queryString);
+      while Atr_IsShoppingListSearch( queryString ) or Atr_IsCompoundSearch( queryString ) do
         self.shopListIndex = self.shopListIndex + 1
-        queryString = Atr_GetShoppingListItem (self)
-        if (queryString == nil) then
+
+        queryString = Atr_GetShoppingListItem( self )
+        if queryString == nil then
           break
         end
       end
 
-      if (queryString == nil) then
-        queryString = "?????";
+      if queryString == nil then
+        queryString = "?????"
       end
     else
-      queryString = self.searchText;
+      queryString = self.searchText
     end
 
-    local exactMatch = (self.exactMatchText ~= nil or self.IDstring ~= nil)
+    local exactMatch = self.exactMatchText ~= nil or self.IDstring ~= nil
 
     local filter = nil
     if filterData ~= nil then
       filter = filterData.filter
     end
 
-    queryString = Auctionator.Util.UTF8_Truncate( queryString ) -- attempting to reduce number of disconnects
+    -- attempting to reduce number of disconnects
+    queryString = Auctionator.Util.UTF8_Truncate( queryString )
 
     Auctionator.Util.Print( filter )
-
     Auctionator.Util.Print(
-      { queryString, minLevel, maxLevel, self.current_page, nil, nil, false, exactMatch, filter },
+      { queryString, minLevel, maxLevel, self.current_page, usable, nil, false, exactMatch, filter },
       'QUERY AUCTION ITEMS PARAMS'
     )
-    QueryAuctionItems (queryString, minLevel, maxLevel, self.current_page, nil, nil, false, exactMatch, filter )
 
-    self.query_sent_when  = gAtr_ptime;
-    self.processing_state = Auctionator.Constants.SearchStates.POST_QUERY;
+    QueryAuctionItems (queryString, minLevel, maxLevel, self.current_page, usable, nil, false, exactMatch, filter )
 
-    self.current_page   = self.current_page + 1;
+    self.query_sent_when  = gAtr_ptime
+    self.processing_state = Auctionator.Constants.SearchStates.POST_QUERY
+
+    self.current_page   = self.current_page + 1
   end
 
 end
