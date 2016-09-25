@@ -78,12 +78,12 @@ end
 -- TODO I *think* I only want to do this when curpage and indexonpage are passed
 -- Not terribly certain that I'll always get these, and not certain that they
 -- correspond to what I think they do. Yay code spikes
-function Auctionator.Scan:AddToBidIndex( buyoutPrice, stackSize, page, index )
+function Auctionator.Scan:AddToBidIndex( buyoutPrice, stackSize, page, index, owner, stackSize )
   if page == nil or index == nil then
     return
   end
 
-  local key = buyoutPrice .. '-' .. stackSize
+  local key = ( buyoutPrice or 'nobuyout' ) .. '-' .. stackSize
 
   if self.bidIndex[ key ] == nil then
     self.bidIndex[ key ] = { count = 0, entries = {} }
@@ -92,7 +92,9 @@ function Auctionator.Scan:AddToBidIndex( buyoutPrice, stackSize, page, index )
   self.bidIndex[ key ].count = self.bidIndex[ key ].count + 1
   table.insert( self.bidIndex[ key ].entries, {
     page = page,
-    index = index
+    index = index,
+    owner = owner,
+    stackSize = stackSize
   })
 end
 
@@ -106,7 +108,7 @@ function Auctionator.Scan:AddScanItem( stackSize, buyoutPrice, owner, numAuction
     numAuctions = 1
   end
 
-  self:AddToBidIndex( buyoutPrice, stackSize, curpage, indexOnPage )
+  self:AddToBidIndex( buyoutPrice, stackSize, curpage, indexOnPage, owner, stackSize )
 
   for i = 1, numAuctions do
     sd["stackSize"] = stackSize
