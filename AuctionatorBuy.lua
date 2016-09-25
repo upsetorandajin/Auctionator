@@ -89,7 +89,7 @@ function Atr_Buy1_Onclick()
   local scan = currentPane.activeScan
   local data = scan.sortedData[ currentPane.currIndex ]
 
-  Auctionator.Util.Print( scan.bidIndex, 'SCAN DATA' )
+  -- Auctionator.Util.Print( scan.bidIndex, 'SCAN DATA' )
 
   gAtr_Buy_BuyoutPrice = data.buyoutPrice
   gAtr_Buy_ItemName = scan.itemName
@@ -119,6 +119,7 @@ function Atr_Buy1_Onclick()
 
   if scan.bidIndex ~= nil then
     gAtr_Buy_MatchList = scan.bidIndex[ gAtr_Buy_BuyoutPrice .. '-' .. gAtr_Buy_StackSize ]
+    Auctionator.Util.Print( gAtr_Buy_MatchList, 'MATCHES?')
 
     -- Atr_Buy_Confirm_OKBut:Enable()
     if gAtr_Buy_NumBought > 0 then
