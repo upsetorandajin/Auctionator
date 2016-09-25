@@ -365,17 +365,6 @@ function Auctionator.SearchUI.Disable()
   Atr_ClearAll();
 end
 
-function Atr_Search_Onclick_2( search )
-  Auctionator.Debug.Message( 'Atr_Search_Onclick_2' )
-
-  Auctionator.SearchUI.Disable()
-
-  local currentPane = Atr_GetCurrentPane();
-  currentPane:DoSearch2( search )
-
-  Atr_ClearHistory()
-end
-
 -----------------------------------------
 
 function Atr_AddToRecents (searchText)
@@ -976,34 +965,6 @@ function Atr_Adv_Search_Do()
   Atr_Search_Onclick()
   Atr_Adv_Search_Dialog:Hide()
 end
-
--- function Atr_Adv_Search_Do()
---   Auctionator.Debug.Message( 'Atr_Adv_Search_Do' )
-
---   local parentKey = UIDropDownMenu_GetSelectedValue( Atr_ASDD_Class )
---   local subClassKey = UIDropDownMenu_GetSelectedValue( Atr_ASDD_Subclass )
-
---   local minLevel = Atr_AS_Minlevel:GetNumber()
---   local maxLevel = Atr_AS_Maxlevel:GetNumber()
---   local text = Atr_AS_Searchtext:GetText()
-
---   local search = Auctionator.SearchQuery:new({
---     text = text,
---     minLevel = minLevel,
---     maxLevel = maxLevel,
---     parentKey = parentKey,
---     subClassKey = subClassKey,
---     advanced = true
---   })
-
---   Atr_SetSearchText( search:ToString() )
-
---   -- TODO: Finish implementing version 2 of search
---   -- Atr_Search_Onclick();
---   Atr_Search_Onclick_2( search )
-
---   Atr_Adv_Search_Dialog:Hide();
--- end
 
 -----------------------------------------
 

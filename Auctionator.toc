@@ -18,8 +18,6 @@ AuctionatorUtil.lua
 zcUtils.lua
 
 AuctionatorItemLink.lua
-AuctionatorSearch.lua
-AuctionatorSearchQuery.lua
 
 Locales\Manifest.xml
 AuctionatorLocalize.lua
