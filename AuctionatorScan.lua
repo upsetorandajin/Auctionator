@@ -640,7 +640,7 @@ function Atr_ParseCompoundSearch( searchString )
     delimiter = ">"
   end
 
-  local queryString, filterKey, minLevel, maxLevel, minItemLevel, maxItemLevel =
+  local queryString, filterKey, minLevel, maxLevel, minItemLevel, maxItemLevel, usable =
     strsplit( delimiter, searchString )
 
   local filter = Auctionator.FilterLookup[ filterKey ]
@@ -668,7 +668,7 @@ function Atr_ParseCompoundSearch( searchString )
     maxItemLevel = nil
   end
 
-  return queryString, filter, minLevel, maxLevel, minItemLevel, maxItemLevel
+  return queryString, filter, minLevel, maxLevel, minItemLevel, maxItemLevel, usable
 end
 
 -----------------------------------------

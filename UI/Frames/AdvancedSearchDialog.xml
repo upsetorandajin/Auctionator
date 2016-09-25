@@ -22,6 +22,16 @@
           <Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="40" y="-120"/></Offset></Anchor></Anchors>
         </FontString>
 
+        <FontString name="Atr_AS_Usable_Label" inherits="GameFontNormalSmall" text="Usable Items">
+          <Anchors>
+            <Anchor point="TOPLEFT">
+              <Offset>
+                <AbsDimension x="300" y="-50" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+        </FontString>
+
         <FontString name="Atr_AS_SubCat_Label" inherits="GameFontNormalSmall" text="Subcategory">
           <Anchors><Anchor point="TOPLEFT"><Offset><AbsDimension x="240" y="-120"/></Offset></Anchor></Anchors>
         </FontString>
@@ -51,6 +61,17 @@
         <Size><AbsDimension x="240" y="20"/></Size>
         <Anchors><Anchor point="TOPLEFT" relativeTo="Atr_AS_Searchtext_Label" relativePoint="BOTTOMLEFT"><Offset><AbsDimension x="2" y="-4"/></Offset></Anchor></Anchors>
       </EditBox>
+
+      <CheckButton name="Atr_AS_Usable_Checkbox" inherits="UICheckButtonTemplate">
+        <Size>
+          <AbsDimension x="20" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativeTo="Atr_AS_Usable_Label" relativePoint="BOTTOMLEFT">
+            <Offset><AbsDimension x="2" y="-6"/></Offset>
+          </Anchor>
+        </Anchors>
+      </CheckButton>
 
       <Frame name="Atr_ASDD_Class" inherits="UIDropDownMenuTemplate">
         <Anchors><Anchor point="TOPLEFT" relativeTo="Atr_AS_Cat_Label" relativePoint="BOTTOMLEFT"><Offset><AbsDimension x="-20" y="-4"/></Offset></Anchor></Anchors>
