@@ -1580,7 +1580,7 @@ function Atr_CreateAuction_OnClick ()
 
   Atr_Memorize_Stacking_If();
 
-  PostAuction (stackStartingPrice, stackBuyoutPrice, duration, gJustPosted.StackSize, gJustPosted.NumStacks);
+  StartAuction (stackStartingPrice, stackBuyoutPrice, duration, gJustPosted.StackSize, gJustPosted.NumStacks);
 
   Atr_SetToShowCurrent();
 end
